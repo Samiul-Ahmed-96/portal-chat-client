@@ -1,13 +1,18 @@
 import victory from "@/assets/victory.svg";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import logo from "../../assets/logo.png";
 
 const Auth = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmePassword, setConfirmPassword] = useState("");
+
+  const handleLogin = async () =>{}
+  const handleSignUp = async () =>{}
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
@@ -53,6 +58,7 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 ></Input>
+                <Button className='rouded-3 p-6' onClick={handleLogin}>Login</Button>
               </TabsContent>
               <TabsContent className="flex flex-col gap-5 mt-10" value="signup">
                 <Input
@@ -76,9 +82,13 @@ const Auth = () => {
                   value={confirmePassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 ></Input>
+                <Button className='rouded-3 p-6' onClick={handleSignUp}>Sign Up</Button>
               </TabsContent>
             </Tabs>
           </div>
+        </div>
+        <div className="flex justify-center items-center">
+            <img src={logo} alt="logo" />
         </div>
       </div>
     </div>

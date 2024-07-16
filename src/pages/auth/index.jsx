@@ -2,17 +2,42 @@ import victory from "@/assets/victory.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { apiClient } from "@/lib/api-client";
+import { SIGNUP_ROUTE } from "@/utils/constants";
 import { useState } from "react";
+import { toast } from "sonner";
 import logo from "../../assets/logo.png";
 
 const Auth = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmePassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const validateSignUp = () =>{
+    if(!email.length){
+      toast.error("Email is required");
+      return false;
+    }
+    if(!password.length){
+      toast.error("Password is required");
+      return false;
+    }
+    if(password !== confirmPassword){
+      toast.error("Password and Confirm password should be same");
+      return false;
+    }
+    return true;
+  }
+  
 
   const handleLogin = async () =>{}
-  const handleSignUp = async () =>{}
+  const handleSignUp = async () =>{
+    if(validateSignUp()){
+      const response = await apiClient.post(SIGNUP_ROUTE,{email,password})
+      console.log({response})
+    }
+  }
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
@@ -79,7 +104,7 @@ const Auth = () => {
                   placeholder="Confirm Password"
                   type="password"
                   className="rounded-3 p-6"
-                  value={confirmePassword}
+                  value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 ></Input>
                 <Button className='rouded-3 p-6' onClick={handleSignUp}>Sign Up</Button>

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiClient } from "@/lib/api-client";
+import { useAppStore } from "@/store";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,64 +11,76 @@ import { toast } from "sonner";
 import logo from "../../assets/logo.png";
 
 const Auth = () => {
-
   const navigate = useNavigate();
+  //States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const validateSignUp = () =>{
-    if(!email.length){
+  //Get user set function from zustand
+  const { setUserInfo } = useAppStore();
+  //Validate signup
+  const validateSignUp = () => {
+    if (!email.length) {
       toast.error("Email is required");
       return false;
     }
-    if(!password.length){
+    if (!password.length) {
       toast.error("Password is required");
       return false;
     }
-    if(password !== confirmPassword){
+    if (password !== confirmPassword) {
       toast.error("Password and Confirm password should be same");
       return false;
     }
     return true;
-  }
-
-  const validateLogin = () =>{
-    if(!email.length){
+  };
+  //Validate Login
+  const validateLogin = () => {
+    if (!email.length) {
       toast.error("Email is required");
       return false;
     }
-    if(!password.length){
+    if (!password.length) {
       toast.error("Password is required");
       return false;
     }
     return true;
-  }
-  
+  };
 
-  const handleLogin = async () =>{
-    if(validateLogin()){
-      const response = await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
-      if(response.data.user.id){
-        if(response.data.user.profileSetup){
-          navigate("/chat")
-        }else{
-          navigate("/profile")
+  //Handle login
+  const handleLogin = async () => {
+    if (validateLogin()) {
+      const response = await apiClient.post(
+        LOGIN_ROUTE,
+        { email, password },
+        { withCredentials: true }
+      );
+      if (response.data.user.id) {
+        setUserInfo(response.data.user);
+        if (response.data.user.profileSetup) {
+          navigate("/chat");
+        } else {
+          navigate("/profile");
         }
       }
-      console.log({response})
+      console.log({ response });
     }
-  }
-
-  const handleSignUp = async () =>{
-    if(validateSignUp()){
-      const response = await apiClient.post(SIGNUP_ROUTE,{email,password},{withCredentials:true})
-      if(response.status === 201){
-        navigate("/profile")
+  };
+  //Handle Signup
+  const handleSignUp = async () => {
+    if (validateSignUp()) {
+      const response = await apiClient.post(
+        SIGNUP_ROUTE,
+        { email, password },
+        { withCredentials: true }
+      );
+      if (response.status === 201) {
+        setUserInfo(response.data.user);
+        navigate("/profile");
       }
-      console.log({response})
+      console.log({ response });
     }
-  }
+  };
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
@@ -75,7 +88,9 @@ const Auth = () => {
         <div className="flex flex-col gap-10 items-center justify-center">
           <div className="flex items-center justify-center flex-col">
             <div className="flex items-center justify-center">
-              <h1 className="text-5xl font-bold md:text-6xl text-green-800">Welcome</h1>
+              <h1 className="text-5xl font-bold md:text-6xl ">
+                Welcome
+              </h1>
               <img src={victory} alt="victory emoji" className="h-[100px]" />
             </div>
             <p className="font-medium text-center">
@@ -113,7 +128,9 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 ></Input>
-                <Button className='rouded-3 p-6' onClick={handleLogin}>Login</Button>
+                <Button className="rouded-3 p-6" onClick={handleLogin}>
+                  Login
+                </Button>
               </TabsContent>
               <TabsContent className="flex flex-col gap-5 mt-10" value="signup">
                 <Input
@@ -137,13 +154,15 @@ const Auth = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 ></Input>
-                <Button className='rouded-3 p-6' onClick={handleSignUp}>Sign Up</Button>
+                <Button className="rouded-3 p-6" onClick={handleSignUp}>
+                  Sign Up
+                </Button>
               </TabsContent>
             </Tabs>
           </div>
         </div>
         <div className="flex justify-center items-center">
-            <img src={logo} alt="logo" />
+          <img src={logo} alt="logo" />
         </div>
       </div>
     </div>
